@@ -1,6 +1,6 @@
 import os
 from file_handler import FileHandler
-from rlnc_engine import rlnc_encode, rlnc_decode
+from rlnc_engine import RlncEngine
 
 def test_file_coding():
     # 1. test icin gecici bir dosya olusturur 
@@ -16,6 +16,7 @@ def test_file_coding():
 
     # chunk_size=16 byte, gen_size=4 parca (Her nesil 64 byte isleyecek)
     fh = FileHandler(chunk_size=16, gen_size=4)
+    re = RlncEngine()
     generations, original_size = fh.file_to_generations(test_file)
     print(f"Toplam {len(generations)} nesil olusturuldu.")
 
@@ -24,14 +25,14 @@ def test_file_coding():
     print("\n--- 2. KODLAMA VE ÇOZME SIMULASYONU ---")
     for i, gen_matrix in enumerate(generations):
         # kodlama: 4 orijinal parcadan 6 sifreli paket uret (Yedeklilik)
-        coef_matrix, encoded_payloads = rlnc_encode(gen_matrix, num_encoded_packets=6)
+        coef_matrix, encoded_payloads = re.rlnc_encode(gen_matrix, num_encoded_packets=6)
 
         # ag kaybı (Churn) simulasyonu: 2 paket yolda kaybolsun, sadece 4 paket ulassin
         received_coefs = coef_matrix[:4]
         received_payloads = encoded_payloads[:4]
 
         # cozumleme: Ulaşan 4 bağımsız paket ile matrisi geri elde et
-        decoded_gen = rlnc_decode(received_coefs, received_payloads)
+        decoded_gen = re.rlnc_decode(received_coefs, received_payloads)
         decoded_generations.append(decoded_gen)
 
     print("Tum nesiller başariyla kodlandi ve ag kayiplarina ragmen cozuldu.")

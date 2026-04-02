@@ -2,36 +2,52 @@ import numpy as np
 import galois
 
 GF = galois.GF(2**8)
+class RlncEngine:
+    def rlnc_encode(self, data, num_encoded_packets):
+        """
+        rastgele dogrusal kombinasyonlarla sifreler
+        """
+        if not isinstance(data, galois.FieldArray):
+            #byte dizilerini integer listesine cevirip GF matirsine donustur
+            matris_verisi = [list(blok) for blok in data]
+            data_matris = GF(matris_verisi)
+        else:
+            data_matris = data
 
-def rlnc_encode(data_matris, num_encoded_packets):
-    """
-    rastgele dogrusal kombinasyonlarla sifreler
-    """
-    num_chunks = data_matris.shape[0]
+        num_chunks = data_matris.shape[0]
 
-    #rastgele katsayi matrisi olusturur
-    #boyut : (uretilecek_paket_sayisi, orijinal_parca sayisi)
-    encoding_matris = GF.Random((num_encoded_packets, num_chunks))
+        #rastgele katsayi matrisi olusturur
+        #boyut : (uretilecek_paket_sayisi, orijinal_parca sayisi)
+        encoding_matris = GF.Random((num_encoded_packets, num_chunks))
 
-    #kodlanmis paketleri uretir: sifreli paket = katsayilsar * veri
-    encoded_payloads = encoding_matris @ data_matris
+        #kodlanmis paketleri uretir: sifreli paket = katsayilsar * veri
+        encoded_payloads = encoding_matris @ data_matris
 
-    return encoding_matris, encoded_payloads
+        return encoding_matris, encoded_payloads
 
-def rlnc_decode(received_coefficients, recived_payloads):
-    """ 
-    alinan katsayilar ve sifreli veriler uzerinden gauss eleme ile orijinal veriyi cozer
-    """
-    #matrisin tersini al
-    inverse_matris = np.linalg.inv(received_coefficients)
+    def rlnc_decode(self, received_coefficients, recived_payloads):
+        """ 
+        alinan katsayilar ve sifreli veriler uzerinden gauss eleme ile orijinal veriyi cozer
+        """
+        #matris rankini kontrol et
+        mevcut_rank = np.linalg.matrix_rank(received_coefficients)
+        beklenen_rank = received_coefficients.shape[1] #orijinal parca sayisi (sutun sayisi)
 
-    #orijinal veriyi hesapla: veri = katsayilarin_tersi * sifreli_paket
-    decoded_data = inverse_matris @ recived_payloads
+        #eger rank yetersizde hata firlat (alici yeni paket beklemeli)
+        if mevcut_rank < beklenen_rank:
+            raise ValueError(f"Yetersiz bagimsiz paket! Beklenen rank: {beklenen_rank}")
+        
+        #matrisin tersini al
+        inverse_matris = np.linalg.inv(received_coefficients)
+        
+        #orijinal veriyi hesapla: veri = katsayilarin_tersi * sifreli_paket
+        decoded_data = inverse_matris @ recived_payloads
     
-    return decoded_data
+        return decoded_data
 
 # --- TEST SENARYOSU ---
 if __name__ == "__main__":
+    re = RlncEngine()
     # Orijinal Veri (Ornegin 4 parcaya bolunmuş 3'er bytelik bloklar)
     # Gercek sistemde bu matris, diske yazilan bir dosyanin bytelarindan beslenir.
     print("--- 1. ORİJİNAL VERİ (KAYNAK DÜĞÜM) ---")
@@ -44,7 +60,7 @@ if __name__ == "__main__":
     # --- SIFRELEME ---
     print("\n--- 2. KODLAMA (ENCODING) ---")
     # Dosyamiz 4 parca. Churn (kopma) etkisine karsi aga 6 paket saliyoruz (Redundancy).
-    coef_matrix, encoded_packets = rlnc_encode(original_data, num_encoded_packets=6)
+    coef_matrix, encoded_packets = re.rlnc_encode(original_data, num_encoded_packets=6)
     print("Üretilen Şifreli Paket Sayısı: 6")
     
     # --- AG TRANSFERİ SIMULASYONU (KAYiPLi AG) ---
@@ -56,7 +72,7 @@ if __name__ == "__main__":
     # --- COZUMLEME ---
     print("\n--- 3. ÇOZUMLEME (DECODING - HEDEF DUGUM) ---")
     try:
-        decoded_result = rlnc_decode(received_coefs, received_data)
+        decoded_result = re.rlnc_decode(received_coefs, received_data)
         print("cozülen veri:")
         print(decoded_result)
         
