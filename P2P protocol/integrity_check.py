@@ -1,7 +1,7 @@
 import hashlib
 
 class MerkleTree:
-    def merkle_tree(self, data_blocks=None):
+    def __init__(self, data_blocks=None):
         """
         data_blocks: Byte dizinlerinden olusan bir liste
         Eger alici (Leecher) isek agaci bastan kurmayiz, sadece dogrulama yapariz
