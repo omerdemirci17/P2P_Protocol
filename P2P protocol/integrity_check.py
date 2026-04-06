@@ -11,7 +11,7 @@ class MerkleTree:
         self.tree = []
         self.root_hash = None
 
-        if data_blocks:
+        if data_blocks is not None:
             self.build_tree_from_blocks(data_blocks)
 
     def _hash(self, data):
