@@ -23,6 +23,8 @@ class Node:
         #leecher
         self.receive_buffer = {}
         self.expected_rank = 4
+        self.complated_generations = {}
+        self.total_generations = 1
 
     def share_file(self, file_path):
         """
@@ -120,6 +122,16 @@ class Node:
         if merkle.root_hash == expected_node_hash:
             print(f" GUVENLIK ONAYI: Dosya yolda bozulmamis! (Hash: {merkle.root_hash[:10]}...)")
             print(f"[{self.node_id}] ISLEM BASARILI! Nesil {gen_id} diske yazilmaya hazir.\n")
+
+            #matrisi byte cevir ve havuza at
+            decode_bytes = np.array(decoded_gen).tobytes()
+            self.complated_generations[gen_id]=decode_bytes
+
+            #eger bekledigimiz tum nesiller geldiyse fiziksel dosyayi olustur
+            if len(self.complated_generations) == self.total_generations:
+                print(f"[{self.node_id}] Dosya tamamlandi! Disk islemi baslatiliyor...")
+                file_name = f"indirilmis_dosya_{self.node_id}.txt"
+                self.file_handler.write_file(self.complated_generations, file_name)          
         else:
             print(f"    GUVENLIK IHLALI: Dosya bozuk veya kirlilik saldirisi (Pollution) tespit edildi!")
 

@@ -48,3 +48,12 @@ class FileHandler:
 
                 f.write(gen_bytes)
                 written_bytes += len(gen_bytes)
+    
+    def write_file(self, complated_generations, output_path):
+        """
+        cozulmus ve dogrulanmis nesilleri sirayla birlestirip fiziksel bir dosya olarak diske yazar.
+        """
+        with open(output_path,"wb") as f:
+            for i in range(len(complated_generations)):
+                f.write(complated_generations)
+        print(f"[FILE_HANDLER] Veri fiziksel olarak diske yazildi:{output_path}")
