@@ -72,7 +72,7 @@ class Node:
         """
         Agdan gelen paketi havuza alir, rank kontrolu yapar ve gerekirse motoru tetikler.
         """
-        gen_id = packet.gen_id
+        gen_id = packet.generation_id
 
         #bu nesil icin daha once havuz acilmadiysa, yeni bir tane ac
         if gen_id not in self.receive_buffer:
@@ -118,7 +118,7 @@ class Node:
         #2. Merkle ile Dogrula (Guvenlik Kontrolu)
         merkle = MerkleTree(decoded_gen)
         if merkle.root_hash == expected_node_hash:
-            print(" GUVENLIK ONAYI: Dosya yolda bozulmamis! (Hash: {merkle.root_hash[:10]}...)")
+            print(f" GUVENLIK ONAYI: Dosya yolda bozulmamis! (Hash: {merkle.root_hash[:10]}...)")
             print(f"[{self.node_id}] ISLEM BASARILI! Nesil {gen_id} diske yazilmaya hazir.\n")
         else:
             print(f"    GUVENLIK IHLALI: Dosya bozuk veya kirlilik saldirisi (Pollution) tespit edildi!")
