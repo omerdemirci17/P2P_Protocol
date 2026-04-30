@@ -1,0 +1,1 @@
+bu veri, node beyninden cikip NetworkLayer uzerinden UDP ile ucmustur
