@@ -55,5 +55,5 @@ class FileHandler:
         """
         with open(output_path,"wb") as f:
             for i in range(len(complated_generations)):
-                f.write(complated_generations)
+                f.write(complated_generations[i])
         print(f"[FILE_HANDLER] Veri fiziksel olarak diske yazildi:{output_path}")

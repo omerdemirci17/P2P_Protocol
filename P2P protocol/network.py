@@ -22,7 +22,7 @@ class NetworkLayer:
     def start_listening(self):
         """UDP Soketini acar ve arka planda dinlemeye baslar"""
 
-        self.is_listenig = True
+        self.is_listening = True
         self.sock= socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.sock.bind((self.host,self.port))
 

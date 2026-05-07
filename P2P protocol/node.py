@@ -1,6 +1,6 @@
 from file_handler import FileHandler
 from rlnc_engine import RlncEngine
-from integrity_check import MerkleTree
+from merkle_tree import MerkleTree
 from packet import Packet
 import galois
 import numpy as np
