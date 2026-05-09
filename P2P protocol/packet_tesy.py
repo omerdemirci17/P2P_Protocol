@@ -32,7 +32,7 @@ def test_packet():
 
     #4. dogrulama: giden veri ile gelen veri matematiksel olarak ayni mi
     if  np.array_equal(orijinal_paket.coefficients, gelen_paket.coefficients):
-        print("\n BASARILI: Katsayi matrisleri bozunmadan tasindi!")
+        print("\n BASARILI: Katsayi matrisleri bozunmadan tasindi!", gelen_paket)
     else:
         print("\n HATA: Katsayilar yolda bozuldu!")
 

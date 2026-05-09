@@ -32,6 +32,7 @@ class FileHandler:
             matrix = np.frombuffer(gen_data, dtype=np.uint8).reshape(self.gen_size, self.chunk_size)
             generations.append(GF(matrix))
         return generations, file_size
+        
     def generations_to_file(self, generations, output_path, original_file_size): 
         """
         cozulen nesil matrisini birlestirip orijinal dosyayi diske yazar
@@ -54,6 +55,11 @@ class FileHandler:
         cozulmus ve dogrulanmis nesilleri sirayla birlestirip fiziksel bir dosya olarak diske yazar.
         """
         with open(output_path,"wb") as f:
+            full_data = b""
             for i in range(len(complated_generations)):
-                f.write(complated_generations[i])
+                full_data += complated_generations[i]
+            
+            full_data = full_data.rstrip(b'\x00')
+            f.write(full_data)
+
         print(f"[FILE_HANDLER] Veri fiziksel olarak diske yazildi:{output_path}")

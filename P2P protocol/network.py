@@ -20,7 +20,9 @@ class NetworkLayer:
         self.is_listenig = False
 
     def start_listening(self):
-        """UDP Soketini acar ve arka planda dinlemeye baslar"""
+        """
+        UDP Soketini acar ve arka planda dinlemeye baslar
+        """
 
         self.is_listening = True
         self.sock= socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -31,7 +33,9 @@ class NetworkLayer:
         print(f"[{self.node_id}] AG KATMANI AKTIF: {self.host}:{self.port} dinleniyor...")
 
     def _listen_loop(self):
-        """Asenkron dinleme dongusu."""
+        """
+        Asenkron dinleme dongusu.
+        """
         while self.is_listenig:
             try:
                 data,addr = self.sock.recvfrom(65535)
@@ -47,7 +51,9 @@ class NetworkLayer:
                     print(f"[{self.node_id}] AG hatasi:{e}")
     
     def send_packet(self,packet,target_ip,target_port):
-        """Node'dan gelen paketi dis dunyaya (hedef IP/Port) firlatir"""
+        """
+        Node'dan gelen paketi dis dunyaya (hedef IP/Port) firlatir
+        """
         send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         data = packet.to_bytes()
         send_sock.sendto(data, (target_ip,target_port))

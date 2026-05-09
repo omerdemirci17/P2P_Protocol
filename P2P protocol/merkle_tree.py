@@ -89,7 +89,7 @@ if __name__ == "__main__":
     print(f"Sonuc   : {'ONAYLANDI - diske yaziliyor' if sonuc_dogru else 'REDDEDILDI'}")
 
     #senaryo 2: kotu niyetli bir es (peer) verinin arasina sizdi ve veriyi degistirdi
-    gelen_bozuk_veri = b"2.nesil: Bu veri cok onemli - HACKER BURADAYDI"
+    gelen_bozuk_veri = b"2.nesil: Bu veri cok onemlii"
     beklenen_hash_1 = mt.leaves[1]
 
     sonuc_bozuk = mt.verify_generation(gelen_bozuk_veri, beklenen_hash_1)
